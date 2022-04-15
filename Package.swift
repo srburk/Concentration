@@ -8,15 +8,15 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "WWDC-Brainstorming",
+    name: "Concentration",
     platforms: [
         .iOS("15.2")
     ],
     products: [
         .iOSApplication(
-            name: "WWDC-Brainstorming",
+            name: "Concentration",
             targets: ["AppModule"],
-            bundleIdentifier: "com.samburkhard.WWDC-Brainstorming",
+            bundleIdentifier: "com.samburkhard.Concentration",
             teamIdentifier: "3B52K98W7P",
             displayVersion: "1.0",
             bundleVersion: "1",
