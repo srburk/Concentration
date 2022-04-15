@@ -46,7 +46,22 @@ struct ContentView: View {
             
             .onChange(of: timer.timeElapsed) { _ in
                 if (timer.timeElapsed >= persistentStore.activeSessionLength()) {
+                    
                     timer.stop()
+                    
+                    // incremement completed
+                    switch(persistentStore.settings.activeSession) {
+                    case .work:
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].completedSessions += 1
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].totalSessionTime += persistentStore.activeSessionLength()
+                    case .longBreak:
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].completedBreaks += 1
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
+                    case .shortBreak:
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].completedBreaks += 1
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
+                    }
+                    
                     persistentStore.nextSession()
                     timer.timeElapsed = 0
                 }

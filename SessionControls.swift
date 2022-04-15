@@ -16,6 +16,8 @@ struct SessionControls: View {
     
     @State var isShowingAlert: Bool = false
     
+    @State var startedSession: Bool = false
+    
     @ViewBuilder
     func rootView() -> some View {
         if (timer.isActive) {
@@ -61,6 +63,10 @@ struct SessionControls: View {
                     }
                   ))
         }
+        
+        .onChange(of: persistentStore.settings.activeSession) { _ in
+            startedSession = false
+        }
             
     }
     
@@ -85,6 +91,20 @@ struct SessionControls: View {
                 withAnimation(.spring()) {
                     timer.isActive = true
                     timer.startTimer(timeTarget: persistentStore.activeSessionLength())
+                }
+                
+                if (!startedSession) {
+                    startedSession = true
+                    // incremement started
+                    switch(persistentStore.settings.activeSession) {
+                    case .work:
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].startedSesssions += 1
+                    case .longBreak:
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].startedBreaks += 1
+                    case .shortBreak:
+                        persistentStore.trends.data[TrendsManager.shared.currentDay()].startedBreaks += 1
+                    }
+                    
                 }
                                                 
                 let impact = UIImpactFeedbackGenerator(style: .medium)
