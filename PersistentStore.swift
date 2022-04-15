@@ -36,6 +36,8 @@ class PersistenceStore: ObservableObject {
     
     @Published var session: SessionModel = SessionModel(workLength: 1500, shortLength: 300, longLength: 1200)
     
+    @Published var trends: SessionData = SessionData(data: [])
+    
 }
 
 extension PersistenceStore {
@@ -71,6 +73,7 @@ extension PersistenceStore {
     }
     
     func nextSession() {
+        
         withAnimation {
             switch(settings.activeSession) {
             case .work:
@@ -104,6 +107,11 @@ extension PersistenceStore {
             let defaults = UserDefaults.standard
             defaults.set(encoded, forKey: "Session")
         }
+        
+        if let encoded = try? encoder.encode(trends) {
+            let defaults = UserDefaults.standard
+            defaults.set(encoded, forKey: "Trends")
+        }
     }
     
     func load() {
@@ -120,6 +128,13 @@ extension PersistenceStore {
             let decoder = JSONDecoder()
             if let sessionModel = try? decoder.decode(SessionModel.self, from: session) {
                 self.session = sessionModel
+            }
+        }
+        
+        if let trends = defaults.object(forKey: "Trends") as? Data {
+            let decoder = JSONDecoder()
+            if let sessionData = try? decoder.decode(SessionData.self, from: trends) {
+                self.trends = sessionData
             }
         }
     }

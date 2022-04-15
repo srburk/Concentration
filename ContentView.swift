@@ -34,7 +34,6 @@ struct ContentView: View {
             VStack {
                 
                 Spacer()
-                
 
                 SessionInfo()
                     .padding()
