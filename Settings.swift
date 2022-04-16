@@ -15,30 +15,36 @@ struct Settings: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @State var usingDeveloperSettings: Bool = false
-    
+    private var timerAmounts: some View {
+        List {
+            Section(header: Text("Work Session")) {
+                TextField("Work Session", value: $persistentStore.session.workLength, formatter: NumberFormatter())
+            }
+            Section(header: Text("Short Break")) {
+                TextField("Short Break", value: $persistentStore.session.shortLength, formatter: NumberFormatter())
+            }
+            Section(header: Text("Long Break")) {
+                TextField("Long Break", value: $persistentStore.session.longLength, formatter: NumberFormatter())
+            }
+        }
+        .navigationTitle("Timer Amounts")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+        
     var body: some View {
         
         NavigationView {
             List {
-                Button(action: {
-                    usingDeveloperSettings.toggle()
-                }) {
-                    Text("Toggle Developer Settings")
+                Section(header: Text("General")) {
+                    NavigationLink(destination: timerAmounts) {
+                        Label("Timer Amounts", systemImage: "timer").foregroundColor(.primary)
+                    }
+                    
+                    NavigationLink(destination: timerAmounts) {
+                        Label("Notifications", systemImage: "bell").foregroundColor(.primary)
+                    }
+                    
                 }
-            }
-            
-            .onChange(of: usingDeveloperSettings) { _ in
-                if (usingDeveloperSettings) {
-                    persistentStore.session.workLength = 25
-                    persistentStore.session.shortLength = 5
-                    persistentStore.session.longLength = 20
-                } else {
-                    persistentStore.session.workLength = 1500
-                    persistentStore.session.shortLength = 300
-                    persistentStore.session.longLength = 1200
-                }
-                
             }
             
             .navigationTitle("Settings")
@@ -53,5 +59,13 @@ struct Settings: View {
             }
         }
         
+    }
+}
+
+struct Settings_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        Settings()
+            .environmentObject(PersistenceStore())
     }
 }

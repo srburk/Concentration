@@ -17,7 +17,7 @@ struct ChartView: View {
         
         for number in 0..<12 {
             let filteredSessions = sessions.filter {
-                $0.date >= Calendar.current.date(bySettingHour: number * 2, minute: 0, second: 0, of: $0.date)! && $0.date <= Calendar.current.date(bySettingHour: (number * 2) + 1, minute: 0, second: 0, of: $0.date)! && $0.type == .work
+                $0.date >= Calendar.current.date(bySettingHour: number * 2, minute: 0, second: 0, of: $0.date)! && $0.date <= Calendar.current.date(bySettingHour: (number * 2) + 1, minute: 0, second: 0, of: $0.date)! && $0.type == .work && $0.completed
             }
             
             if filteredSessions.count > maxSession {
@@ -34,18 +34,18 @@ struct ChartView: View {
             $0.date >= Calendar.current.date(bySettingHour: number, minute: 0, second: 0, of: $0.date)! && $0.date <= Calendar.current.date(bySettingHour: number + 1, minute: 0, second: 0, of: $0.date)! && $0.type == .work && $0.completed
         }
         
-        var barHeight = filteredSessions.count * (120 / maxSessions())
-        var opacity = 1.0
-        
-        if (barHeight == 0) {
-            barHeight = 120
-            opacity = 0.1
-        }
+        let barHeight = filteredSessions.count * (120 / maxSessions())
         
         return VStack {
-            RoundedRectangle(cornerRadius: 10).frame(width: 12, height: CGFloat(barHeight))
-                .foregroundColor(.softGreen)
-                .opacity(opacity)
+            
+            if (barHeight == 0) {
+                RoundedRectangle(cornerRadius: 10).frame(width: 12, height: 120)
+                    .foregroundColor(.softGray)
+            } else {
+                RoundedRectangle(cornerRadius: 10).frame(width: 12, height: CGFloat(barHeight))
+                    .foregroundColor(.softGreen)
+            }
+            
             Text("\(number)").font(.system(size: 12))
         }
     }
