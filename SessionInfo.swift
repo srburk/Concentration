@@ -66,7 +66,6 @@ struct SessionInfo: View {
         return ZStack {
             RoundedRectangle(cornerRadius: 25)
                 .foregroundColor(color)
-                .shadow(radius: 1)
             
             Text(name)
                 .font(.system(size: 20, weight: .medium))

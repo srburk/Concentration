@@ -94,19 +94,14 @@ struct SessionControls: View {
                 }
                 
                 if (!startedSession) {
+                    
                     startedSession = true
+                    
                     // incremement started
-                    switch(persistentStore.settings.activeSession) {
-                    case .work:
-                        persistentStore.trends.data[persistentStore.currentDay()].startedSesssions += 1
-                    case .longBreak:
-                        persistentStore.trends.data[persistentStore.currentDay()].startedBreaks += 1
-                    case .shortBreak:
-                        persistentStore.trends.data[persistentStore.currentDay()].startedBreaks += 1
-                    }
+                    persistentStore.logSession(completed: false)
                     
                 }
-                                                
+                                       
                 let impact = UIImpactFeedbackGenerator(style: .medium)
                 impact.impactOccurred()
                 

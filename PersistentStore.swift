@@ -36,7 +36,7 @@ class PersistenceStore: ObservableObject {
     
     @Published var session: SessionModel = SessionModel(workLength: 1500, shortLength: 300, longLength: 1200)
     
-    @Published var trends: SessionData = SessionData(data: [])
+//    @Published var trends: SessionData = SessionData(data: [])
     
     @Published var data: [SessionLog] = []
     
@@ -44,23 +44,46 @@ class PersistenceStore: ObservableObject {
 
 extension PersistenceStore {
     
-    private func makeNewData() {
-        let newData = DailySessionData(id: UUID(), completedSessions: 0, startedSesssions: 0, totalSessionTime: 0, completedBreaks: 0, startedBreaks: 0, totalBreakTime: 0, date: Date())
-        trends.data.append(newData)
+    func logSession(completed: Bool) {
+        let newSession = SessionLog(id: UUID(), date: Date(), completed: completed, type: settings.activeSession, length: activeSessionLength())
+        data.append(newSession)
     }
     
-    func currentDay() -> Int {
+    func dataReport(range: DateInterval) -> SessionData {
+        let filteredData = data.filter {
+            ($0.date >= range.start) && ($0.date <= range.end)
+        }
         
-        if (trends.data.isEmpty) {
-            makeNewData()
-        } else {
-            if (Calendar.current.isDateInToday(trends.data.last!.date)) {
+        var completedSessions: Int = 0
+        var startedSesssions: Int = 0
+        var totalSessionTime: Int = 0// seconds
+        
+        var completedBreaks: Int = 0
+        var startedBreaks: Int = 0
+        var totalBreakTime: Int = 0 // sessions
+        
+        for log in filteredData {
+            if (log.completed) {
+                if (log.type == .work) {
+                    completedSessions += 1
+                    startedSesssions += 1
+                    totalSessionTime += log.length
+                } else {
+                    completedBreaks += 1
+                    startedBreaks += 1
+                    totalBreakTime += log.length
+                }
             } else {
-                makeNewData()
+                if (log.type == .work) {
+                    startedSesssions += 1
+                } else {
+                    startedBreaks += 1
+                }
             }
         }
         
-        return trends.data.endIndex - 1
+        return SessionData(logs: filteredData, completedSessions: completedSessions, startedSesssions: startedSesssions, totalSessionTime: totalSessionTime, completedBreaks: completedBreaks, startedBreaks: startedBreaks, totalBreakTime: totalBreakTime)
+        
     }
     
     func activeSessionLength() -> Int {
@@ -129,9 +152,14 @@ extension PersistenceStore {
             defaults.set(encoded, forKey: "Session")
         }
         
-        if let encoded = try? encoder.encode(trends) {
+//        if let encoded = try? encoder.encode(trends) {
+//            let defaults = UserDefaults.standard
+//            defaults.set(encoded, forKey: "Trends")
+//        }
+        
+        if let encoded = try? encoder.encode(data) {
             let defaults = UserDefaults.standard
-            defaults.set(encoded, forKey: "Trends")
+            defaults.set(encoded, forKey: "Data")
         }
     }
     
@@ -152,10 +180,17 @@ extension PersistenceStore {
             }
         }
         
-        if let trends = defaults.object(forKey: "Trends") as? Data {
+//        if let trends = defaults.object(forKey: "Trends") as? Data {
+//            let decoder = JSONDecoder()
+//            if let sessionData = try? decoder.decode(SessionData.self, from: trends) {
+//                self.trends = sessionData
+//            }
+//        }
+        
+        if let data = defaults.object(forKey: "Data") as? Data {
             let decoder = JSONDecoder()
-            if let sessionData = try? decoder.decode(SessionData.self, from: trends) {
-                self.trends = sessionData
+            if let sessionData = try? decoder.decode([SessionLog].self, from: data) {
+                self.data = sessionData
             }
         }
     }

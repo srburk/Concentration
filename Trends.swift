@@ -20,11 +20,27 @@ struct Trends: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State var trendsView: TrendsOptions = .day
+    @State var trendsData: SessionData = SessionData(logs: [], completedSessions: 0, startedSesssions: 0, totalSessionTime: 0, completedBreaks: 0, startedBreaks: 0, totalBreakTime: 0)
     
     private func todayText() -> String {
+        
         let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        return dateFormatter.string(from: persistentStore.trends.data[persistentStore.currentDay()].date)
+        
+        var text: String = ""
+        
+        switch (trendsView) {
+        case .day:
+            dateFormatter.dateFormat = "MMMM d"
+            text = dateFormatter.string(from: Date())
+        case .week:
+            dateFormatter.dateFormat = "MMM d"
+            let pastDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())
+            text = dateFormatter.string(from: pastDay!) + "  –  " + dateFormatter.string(from: Date())
+        case .month:
+            dateFormatter.dateFormat = "MMMM yyyy"
+            text = dateFormatter.string(from: Date())
+        }
+        return text
     }
     
     private func formatTime(seconds: Int) -> Int {
@@ -55,7 +71,7 @@ struct Trends: View {
                         .font(.system(size: 20, weight: .medium))
                 }.padding([.leading, .trailing], 35)
                 
-                ChartView()
+                ChartView(sessions: trendsData.logs)
                 
                 VStack(alignment: .leading) {
                     List {
@@ -64,19 +80,19 @@ struct Trends: View {
                             HStack {
                                 Text("Started")
                                 Spacer()
-                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].startedSesssions)")
+                                Text("\(trendsData.startedSesssions)")
                             }
                             
                             HStack {
                                 Text("Completed")
                                 Spacer()
-                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].completedSessions)")
+                                Text("\(trendsData.completedSessions)")
                             }
                             
                             HStack {
                                 Text("Total Work Time")
                                 Spacer()
-                                Text("\(formatTime(seconds: persistentStore.trends.data[persistentStore.currentDay()].totalSessionTime)) min")
+                                Text("\(formatTime(seconds: trendsData.totalSessionTime)) min")
                             }
                         }
                         
@@ -84,19 +100,19 @@ struct Trends: View {
                             HStack {
                                 Text("Started")
                                 Spacer()
-                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].startedBreaks)")
+                                Text("\(trendsData.startedBreaks)")
                             }
                             
                             HStack {
                                 Text("Completed")
                                 Spacer()
-                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].completedBreaks)")
+                                Text("\(trendsData.completedBreaks)")
                             }
                             
                             HStack {
                                 Text("Total Break Time")
                                 Spacer()
-                                Text("\(formatTime(seconds: persistentStore.trends.data[persistentStore.currentDay()].totalBreakTime)) min")
+                                Text("\(formatTime(seconds: trendsData.totalBreakTime)) min")
                             }
                         }
                     }.listStyle(.plain)
@@ -104,6 +120,24 @@ struct Trends: View {
                 
                 Spacer()
                 
+            }
+            
+            .onAppear {
+                
+                let dateInterval: DateInterval
+                
+                switch(trendsView) {
+                case .day:
+                    dateInterval = Calendar.current.dateInterval(of: .day, for: Date()) ?? DateInterval(start: Date(), end: Date())
+                case .week:
+                    let pastDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())
+                    dateInterval = DateInterval(start: pastDay!, end: Date())
+                case .month:
+                    dateInterval = Calendar.current.dateInterval(of: .month, for: Date()) ?? DateInterval(start: Date(), end: Date())
+                }
+                
+                trendsData = persistentStore.dataReport(range: dateInterval)
+
             }
             
             .navigationTitle("Trends")

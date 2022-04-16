@@ -49,20 +49,9 @@ struct ContentView: View {
                     
                     timer.stop()
                     
-                    // incremement completed
-                    switch(persistentStore.settings.activeSession) {
-                    case .work:
-                        persistentStore.trends.data[persistentStore.currentDay()].completedSessions += 1
-                        persistentStore.trends.data[persistentStore.currentDay()].totalSessionTime += persistentStore.activeSessionLength()
-                    case .longBreak:
-                        persistentStore.trends.data[persistentStore.currentDay()].completedBreaks += 1
-                        persistentStore.trends.data[persistentStore.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
-                    case .shortBreak:
-                        persistentStore.trends.data[persistentStore.currentDay()].completedBreaks += 1
-                        persistentStore.trends.data[persistentStore.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
-                    }
-                    
+                    persistentStore.logSession(completed: true)
                     persistentStore.nextSession()
+                    
                     timer.timeElapsed = 0
                 }
             }
