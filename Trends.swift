@@ -21,10 +21,20 @@ struct Trends: View {
     
     @State var trendsView: TrendsOptions = .day
     
+    private func todayText() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        return dateFormatter.string(from: persistentStore.trends.data[persistentStore.currentDay()].date)
+    }
+    
+    private func formatTime(seconds: Int) -> Int {
+        return seconds / 60
+    }
+    
     var body: some View {
         NavigationView {
             
-            VStack {
+            VStack() {
                 
                 Picker("Trends View", selection: $trendsView) {
                     Text("Day").tag(TrendsOptions.day)
@@ -34,14 +44,52 @@ struct Trends: View {
                 .pickerStyle(.segmented)
                 .padding()
                 
-                ForEach(persistentStore.trends.data, id: \.id) { data in
-                    Text("\(data.date.description)")
-                    Text("Completed Sessions: \(data.completedSessions)")
-                    Text("Started Sessions: \(data.startedSesssions)")
-                    Text("Total Session Time: \(data.totalSessionTime)")
-                    Text("Completed Breaks: \(data.completedBreaks)")
-                    Text("Started Breaks: \(data.startedBreaks)")
-                    Text("Total Break Time: \(data.totalBreakTime)")
+                Text("\(todayText())")
+                    .font(.system(size: 25, weight: .medium))
+                
+                VStack(alignment: .leading) {
+                    List {
+                        Section(header: Text("Work Sessions").font(.headline).foregroundColor(.primary)) {
+                            
+                            HStack {
+                                Text("Started")
+                                Spacer()
+                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].startedSesssions)")
+                            }
+                            
+                            HStack {
+                                Text("Completed")
+                                Spacer()
+                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].completedSessions)")
+                            }
+                            
+                            HStack {
+                                Text("Total Work Time")
+                                Spacer()
+                                Text("\(formatTime(seconds: persistentStore.trends.data[persistentStore.currentDay()].totalSessionTime)) min")
+                            }
+                        }
+                        
+                        Section(header: Text("Breaks").font(.headline).foregroundColor(.primary)) {
+                            HStack {
+                                Text("Started")
+                                Spacer()
+                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].startedBreaks)")
+                            }
+                            
+                            HStack {
+                                Text("Completed")
+                                Spacer()
+                                Text("\(persistentStore.trends.data[persistentStore.currentDay()].completedBreaks)")
+                            }
+                            
+                            HStack {
+                                Text("Total Break Time")
+                                Spacer()
+                                Text("\(formatTime(seconds: persistentStore.trends.data[persistentStore.currentDay()].totalBreakTime)) min")
+                            }
+                        }
+                    }.listStyle(.plain)
                 }
                 
                 Spacer()
@@ -59,5 +107,13 @@ struct Trends: View {
                 }
             }
         }
+    }
+}
+
+struct Trends_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        Trends()
+            .environmentObject(PersistenceStore())
     }
 }

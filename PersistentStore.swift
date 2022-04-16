@@ -42,6 +42,25 @@ class PersistenceStore: ObservableObject {
 
 extension PersistenceStore {
     
+    private func makeNewData() {
+        let newData = DailySessionData(id: UUID(), completedSessions: 0, startedSesssions: 0, totalSessionTime: 0, completedBreaks: 0, startedBreaks: 0, totalBreakTime: 0, date: Date())
+        trends.data.append(newData)
+    }
+    
+    func currentDay() -> Int {
+        
+        if (trends.data.isEmpty) {
+            makeNewData()
+        } else {
+            if (Calendar.current.isDateInToday(trends.data.last!.date)) {
+            } else {
+                makeNewData()
+            }
+        }
+        
+        return trends.data.endIndex - 1
+    }
+    
     func activeSessionLength() -> Int {
         switch (settings.activeSession) {
         case .work:

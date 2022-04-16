@@ -52,14 +52,14 @@ struct ContentView: View {
                     // incremement completed
                     switch(persistentStore.settings.activeSession) {
                     case .work:
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].completedSessions += 1
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].totalSessionTime += persistentStore.activeSessionLength()
+                        persistentStore.trends.data[persistentStore.currentDay()].completedSessions += 1
+                        persistentStore.trends.data[persistentStore.currentDay()].totalSessionTime += persistentStore.activeSessionLength()
                     case .longBreak:
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].completedBreaks += 1
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
+                        persistentStore.trends.data[persistentStore.currentDay()].completedBreaks += 1
+                        persistentStore.trends.data[persistentStore.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
                     case .shortBreak:
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].completedBreaks += 1
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
+                        persistentStore.trends.data[persistentStore.currentDay()].completedBreaks += 1
+                        persistentStore.trends.data[persistentStore.currentDay()].totalBreakTime += persistentStore.activeSessionLength()
                     }
                     
                     persistentStore.nextSession()

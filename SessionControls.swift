@@ -98,11 +98,11 @@ struct SessionControls: View {
                     // incremement started
                     switch(persistentStore.settings.activeSession) {
                     case .work:
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].startedSesssions += 1
+                        persistentStore.trends.data[persistentStore.currentDay()].startedSesssions += 1
                     case .longBreak:
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].startedBreaks += 1
+                        persistentStore.trends.data[persistentStore.currentDay()].startedBreaks += 1
                     case .shortBreak:
-                        persistentStore.trends.data[TrendsManager.shared.currentDay()].startedBreaks += 1
+                        persistentStore.trends.data[persistentStore.currentDay()].startedBreaks += 1
                     }
                     
                 }
