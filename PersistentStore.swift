@@ -38,6 +38,8 @@ class PersistenceStore: ObservableObject {
     
     @Published var trends: SessionData = SessionData(data: [])
     
+    @Published var data: [SessionLog] = []
+    
 }
 
 extension PersistenceStore {

@@ -44,8 +44,18 @@ struct Trends: View {
                 .pickerStyle(.segmented)
                 .padding()
                 
-                Text("\(todayText())")
-                    .font(.system(size: 25, weight: .medium))
+                HStack {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .medium))
+                    Spacer()
+                    Text("\(todayText())")
+                        .font(.system(size: 20, weight: .medium))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 20, weight: .medium))
+                }.padding([.leading, .trailing], 35)
+                
+                ChartView()
                 
                 VStack(alignment: .leading) {
                     List {

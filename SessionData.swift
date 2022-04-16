@@ -13,6 +13,16 @@ struct SessionData: Codable {
     
 }
 
+struct SessionLog: Codable, Identifiable {
+    
+    var id: UUID
+    var date: Date
+    
+    var type: SessionType
+    var length: Int // seconds
+    
+}
+
 struct DailySessionData: Codable, Identifiable {
     
     var id: UUID
