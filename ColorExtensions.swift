@@ -8,6 +8,23 @@
 import Foundation
 import SwiftUI
 
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corners: corners) )
+    }
+}
+
+struct RoundedCorner: Shape {
+
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+
 // MARK: Custom Colors
 extension Color {
     
@@ -15,12 +32,16 @@ extension Color {
         return Color(red: 144/255, green: 166/255, blue: 143/255)
     }
     
+    public static var softMint: Color {
+        return Color(red: 48/255, green: 176/255, blue: 199/255)
+    }
+    
     public static var softGray: Color {
         return Color(red: 233/255, green: 233/255, blue: 233/255)
     }
     
     public static var softDarkGray: Color {
-        return Color(red: 77/255, green: 77/255, blue: 77/255)
+        return Color(red: 92/255, green: 91/255, blue: 96/255)
     }
     
     public static var softBlack: Color {

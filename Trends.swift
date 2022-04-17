@@ -19,6 +19,7 @@ struct Trends: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    @State var dateSelection: Date = Date()
     @State var trendsView: TrendsOptions = .day
     @State var trendsData: SessionData = SessionData(logs: [], completedSessions: 0, startedSesssions: 0, totalSessionTime: 0, completedBreaks: 0, startedBreaks: 0, totalBreakTime: 0)
     
@@ -31,14 +32,14 @@ struct Trends: View {
         switch (trendsView) {
         case .day:
             dateFormatter.dateFormat = "MMMM d"
-            text = dateFormatter.string(from: Date())
+            text = dateFormatter.string(from: dateSelection)
         case .week:
             dateFormatter.dateFormat = "MMM d"
-            let pastDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())
-            text = dateFormatter.string(from: pastDay!) + "  –  " + dateFormatter.string(from: Date())
+            let pastDay = Calendar.current.date(byAdding: .day, value: -7, to: dateSelection)
+            text = dateFormatter.string(from: pastDay!) + "  –  " + dateFormatter.string(from: dateSelection)
         case .month:
             dateFormatter.dateFormat = "MMMM yyyy"
-            text = dateFormatter.string(from: Date())
+            text = dateFormatter.string(from: dateSelection)
         }
         return text
     }
@@ -61,17 +62,48 @@ struct Trends: View {
                 .padding()
                 
                 HStack {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            switch(trendsView) {
+                            case .day:
+                                dateSelection = dateSelection.addingTimeInterval(TimeInterval(-1 * 86400))
+                            case .week:
+                                dateSelection = dateSelection.addingTimeInterval(TimeInterval(-7 * 86400))
+                            case .month:
+                                dateSelection = dateSelection.addingTimeInterval(TimeInterval(-7 * 86400))
+                            }
+                        }
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20, weight: .medium))
+                    }.tint(.primary)
+                    
                     Spacer()
+                    
                     Text("\(todayText())")
                         .font(.system(size: 20, weight: .medium))
+                    
                     Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 20, weight: .medium))
+                    
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            switch(trendsView) {
+                            case .day:
+                                dateSelection = dateSelection.addingTimeInterval(TimeInterval(1 * 86400))
+                            case .week:
+                                dateSelection = dateSelection.addingTimeInterval(TimeInterval(7 * 86400))
+                            case .month:
+                                dateSelection = dateSelection.addingTimeInterval(TimeInterval(7 * 86400))
+                            }
+                        }
+                    }) {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 20, weight: .medium))
+                    }.tint(.primary)
+                    
                 }.padding([.leading, .trailing], 35)
                 
-                ChartView(sessions: trendsData.logs, trendsView: $trendsView)
+                ChartView(sessions: trendsData.logs, trendsView: $trendsView, dateSelection: $dateSelection)
                 
                 VStack(alignment: .leading) {
                     List {
@@ -117,6 +149,7 @@ struct Trends: View {
                             }
                         }
                     }.listStyle(.plain)
+                        .padding(.top, 25)
                 }
                 
                 Spacer()

@@ -24,7 +24,6 @@ struct SessionControls: View {
             
             Image(systemName: "pause.fill")
                 .font(.system(size: 75, weight: .medium))
-                .shadow(radius: 1)
                 .onTapGesture {
                                             
                     withAnimation(.spring()) {
@@ -49,7 +48,7 @@ struct SessionControls: View {
             .frame(height: 100)
         
         .alert(isPresented: $isShowingAlert) {
-            Alert(title: Text("Restart this session?"),
+            Alert(title: Text("Restart this session?"), message: Text("This will reset the timer"),
                   primaryButton: .default(
                     Text("Cancel"),
                     action: { isShowingAlert = false }
@@ -83,7 +82,6 @@ struct SessionControls: View {
             }) {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.system(size: 40, weight: .medium))
-                    .shadow(radius: 1)
             }
             
             // Resume Timer
@@ -109,7 +107,6 @@ struct SessionControls: View {
             }) {
                 Image(systemName: "play.fill")
                     .font(.system(size: 75, weight: .medium))
-                    .shadow(radius: 1)
             }
             
             // Skip Forward
@@ -126,7 +123,6 @@ struct SessionControls: View {
             }) {
                 Image(systemName: "forward.end.fill")
                     .font(.system(size: 40, weight: .medium))
-                    .shadow(radius: 1)
             }
             
         }

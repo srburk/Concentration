@@ -44,6 +44,16 @@ struct Settings: View {
                         Label("Notifications", systemImage: "bell").foregroundColor(.primary)
                     }
                     
+                    NavigationLink(destination: Text("Color Accent")) {
+                        Label("Color Accent", systemImage: "paintpalette").foregroundColor(.primary)
+                    }
+                    
+                }
+                
+                Button(action: {
+                    print("DELETE")
+                }) {
+                    Text("Delete Session Data").foregroundColor(.red)
                 }
             }
             

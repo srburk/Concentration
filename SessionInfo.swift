@@ -13,6 +13,8 @@ struct SessionInfo: View {
     @EnvironmentObject var persistentStore: PersistenceStore
     @EnvironmentObject var timer: ActiveTimer
     
+    @Environment(\.colorScheme) var colorScheme
+
     private func formatTime(seconds: Int) -> String {
         
         let time = persistentStore.activeSessionLength() - seconds
@@ -26,15 +28,15 @@ struct SessionInfo: View {
             ForEach(0..<persistentStore.settings.numWorkSessions) { session in
                 if (session < persistentStore.settings.completedSessions) {
                     Image(systemName: "circle.fill")
-                        .foregroundColor(Color.softGreen)
+                        .foregroundColor(Color.softMint)
                         .font(.system(size: 24, weight: .semibold))
                 } else if (session == persistentStore.settings.completedSessions && persistentStore.settings.activeSession == .work) {
                     Image(systemName: "circle.lefthalf.filled")
-                        .foregroundColor(Color.softGreen)
+                        .foregroundColor(Color.softMint)
                         .font(.system(size: 24, weight: .semibold))
                 } else {
                     Image(systemName: "circle")
-                        .foregroundColor(Color.softGreen)
+                        .foregroundColor(Color.softMint)
                         .font(.system(size: 24, weight: .semibold))
                 }
             }
@@ -50,15 +52,20 @@ struct SessionInfo: View {
         
         switch(persistentStore.settings.activeSession) {
         case .work:
-            color = Color.softGray
+            if (colorScheme == .dark) {
+                color = Color.softDarkGray
+                nameColor = .white
+            } else {
+                color = Color.softGray
+                nameColor = .black
+            }
             name = "Work Session"
-            nameColor = .black
         case .shortBreak:
-            color = Color.softGreen
+            color = Color.softMint
             name = "Short Break"
             nameColor = .white
         case .longBreak:
-            color = Color.softGreen
+            color = Color.softMint
             name = "Long Break"
             nameColor = .white
         }
