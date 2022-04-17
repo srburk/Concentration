@@ -56,7 +56,7 @@ struct ChartView: View {
             
             ZStack {
                 
-                chartLines(label: "\(maxSessions) Sessions")
+                chartLines(label: "\(maxSessions) \((maxSessions == 1) ? "Session" : "Sessions")")
                 
                 HStack(alignment: .bottom, spacing: 15) {
                     
@@ -99,27 +99,27 @@ struct ChartView: View {
         for number in 0..<24 {
             
             let filteredSessions = sessions.filter {
-                $0.date >= Calendar.current.date(bySettingHour: number, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.date <= Calendar.current.date(bySettingHour: number + 1, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.type == .work && $0.completed
+                $0.date >= Calendar.current.date(bySettingHour: number, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.date <= Calendar.current.date(bySettingHour: (number == 23) ? 23 : (number + 1), minute: 0, second: 0, of: dateSelection) ?? Date() && $0.type == .work && $0.completed
             }
             
             if filteredSessions.count > maxSessions {
                 maxSessions = filteredSessions.count
             }
-            
+                        
         }
                 
         return VStack {
             
             ZStack {
                 
-                chartLines(label: "\(maxSessions) Sessions")
+                chartLines(label: "\(maxSessions) \((maxSessions == 1) ? "Session" : "Sessions")")
                 
                 HStack(alignment: .bottom, spacing: 8) {
                     
                     ForEach(0..<24) { number in
                         
                         let filteredSessions = sessions.filter {
-                            $0.date >= Calendar.current.date(bySettingHour: number, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.date <= Calendar.current.date(bySettingHour: number + 1, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.type == .work && $0.completed
+                            $0.date >= Calendar.current.date(bySettingHour: number, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.date <= Calendar.current.date(bySettingHour: (number == 23) ? 23 : (number + 1), minute: 0, second: 0, of: dateSelection) ?? Date() && $0.type == .work && $0.completed
                         }
                         
                         let barHeight = filteredSessions.count * (120 / ((maxSessions == 0) ? 1 : maxSessions))
