@@ -46,6 +46,7 @@ struct SessionControls: View {
     var body: some View {
                     
         rootView()
+            .frame(height: 100)
         
         .alert(isPresented: $isShowingAlert) {
             Alert(title: Text("Restart this session?"),

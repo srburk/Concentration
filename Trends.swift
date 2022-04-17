@@ -71,22 +71,22 @@ struct Trends: View {
                         .font(.system(size: 20, weight: .medium))
                 }.padding([.leading, .trailing], 35)
                 
-                ChartView(sessions: trendsData.logs)
+                ChartView(sessions: trendsData.logs, trendsView: $trendsView)
                 
                 VStack(alignment: .leading) {
                     List {
                         Section(header: Text("Work Sessions").font(.headline).foregroundColor(.primary)) {
                             
                             HStack {
-                                Text("Started")
-                                Spacer()
-                                Text("\(trendsData.startedSesssions)")
-                            }
-                            
-                            HStack {
                                 Text("Completed")
                                 Spacer()
                                 Text("\(trendsData.completedSessions)")
+                            }
+                            
+                            HStack {
+                                Text("Completion Rate")
+                                Spacer()
+                                Text("\((trendsData.startedSesssions != 0) ? (String(format: "%.0f" ,(Double(trendsData.completedSessions) / Double(trendsData.startedSesssions)) * 100.0)) : "0")%")
                             }
                             
                             HStack {
@@ -97,16 +97,17 @@ struct Trends: View {
                         }
                         
                         Section(header: Text("Breaks").font(.headline).foregroundColor(.primary)) {
-                            HStack {
-                                Text("Started")
-                                Spacer()
-                                Text("\(trendsData.startedBreaks)")
-                            }
                             
                             HStack {
                                 Text("Completed")
                                 Spacer()
                                 Text("\(trendsData.completedBreaks)")
+                            }
+                            
+                            HStack {
+                                Text("Completion Rate")
+                                Spacer()
+                                Text("\((trendsData.startedBreaks != 0) ? (String(format: "%.0f" ,(Double(trendsData.completedBreaks) / Double(trendsData.startedBreaks)) * 100.0)) : "0")%")
                             }
                             
                             HStack {

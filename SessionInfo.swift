@@ -83,7 +83,8 @@ struct SessionInfo: View {
             Text(formatTime(seconds: timer.timeElapsed))
                 .font(.system(size: 100, weight: .medium))
             
-            sessionLabel()
+                .overlay(sessionLabel().padding(.top, 160))
+                        
         }
     }
 }
