@@ -28,7 +28,7 @@ extension ActiveTimer {
     func finishTime(timeTarget: Int) -> String {
         if (self.isActive) {
             let now = Date()
-            let finishDate = now.advanced(by: TimeInterval(timeTarget))
+            let finishDate = now.advanced(by: TimeInterval(timeTarget) - Double(timeElapsed))
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "h:mm a"
             return dateFormatter.string(from: finishDate)
