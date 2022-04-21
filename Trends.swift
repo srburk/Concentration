@@ -27,6 +27,24 @@ struct Trends: View {
             return seconds / 60
         }
     
+    private func reloadDate(date: Date) {
+        let dateInterval: DateInterval
+        
+        switch(trendsView) {
+        case .day:
+            dateInterval = Calendar.current.dateInterval(of: .day, for: date) ?? DateInterval(start: Date(), end: Date())
+        case .week:
+            let pastDay = Calendar.current.date(byAdding: .day, value: -7, to: date)
+            dateInterval = DateInterval(start: pastDay ?? date, end: date)
+        case .month:
+            dateInterval = Calendar.current.dateInterval(of: .month, for: date) ?? DateInterval(start: Date(), end: Date())
+        }
+        
+        withAnimation(.spring()) {
+            trendsData = persistentStore.dataReport(range: dateInterval)
+        }
+    }
+    
     private func todayText() -> String {
         
         let dateFormatter = DateFormatter()
@@ -56,7 +74,7 @@ struct Trends: View {
                 Picker("Trends View", selection: $trendsView) {
                     Text("Day").tag(TrendsOptions.day)
                     Text("Week").tag(TrendsOptions.week)
-                    Text("Month").tag(TrendsOptions.month)
+//                    Text("Month").tag(TrendsOptions.month)
                 }
                 .pickerStyle(.segmented)
                 .padding()
@@ -159,18 +177,18 @@ struct Trends: View {
             .onAppear {
                 let dateInterval: DateInterval
                 
-                dateInterval = Calendar.current.dateInterval(of: .month, for: Date()) ?? DateInterval(start: Date(), end: Date())
+                dateInterval = Calendar.current.dateInterval(of: .day, for: Date()) ?? DateInterval(start: Date(), end: Date())
                 
                 trendsData = persistentStore.dataReport(range: dateInterval)
             }
             
+            .onChange(of: dateSelection) { _ in
+                reloadDate(date: dateSelection)
+            }
+            
             .onChange(of: trendsView) { _ in
                 
-                let dateInterval: DateInterval
-                
-                dateInterval = Calendar.current.dateInterval(of: .month, for: Date()) ?? DateInterval(start: Date(), end: Date())
-                
-                trendsData = persistentStore.dataReport(range: dateInterval)
+                reloadDate(date: Date())
 
             }
             
@@ -181,6 +199,13 @@ struct Trends: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Done").foregroundColor(.primary)
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        dateSelection = Date()
+                    }) {
+                        Text("Today").foregroundColor(.softMint)
                     }
                 }
             }

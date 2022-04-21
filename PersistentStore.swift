@@ -82,7 +82,8 @@ extension PersistenceStore {
             }
         }
         
-        return SessionData(logs: filteredData, completedSessions: completedSessions, startedSesssions: startedSesssions, totalSessionTime: totalSessionTime, completedBreaks: completedBreaks, startedBreaks: startedBreaks, totalBreakTime: totalBreakTime)
+        let session = SessionData(logs: filteredData, completedSessions: completedSessions, startedSesssions: startedSesssions, totalSessionTime: totalSessionTime, completedBreaks: completedBreaks, startedBreaks: startedBreaks, totalBreakTime: totalBreakTime)
+        return session
         
     }
     
