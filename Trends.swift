@@ -23,6 +23,10 @@ struct Trends: View {
     @State var trendsView: TrendsOptions = .day
     @State var trendsData: SessionData = SessionData(logs: [], completedSessions: 0, startedSesssions: 0, totalSessionTime: 0, completedBreaks: 0, startedBreaks: 0, totalBreakTime: 0)
     
+    private func formatTime(seconds: Int) -> Int {
+            return seconds / 60
+        }
+    
     private func todayText() -> String {
         
         let dateFormatter = DateFormatter()
@@ -42,10 +46,6 @@ struct Trends: View {
             text = dateFormatter.string(from: dateSelection)
         }
         return text
-    }
-    
-    private func formatTime(seconds: Int) -> Int {
-        return seconds / 60
     }
     
     var body: some View {
@@ -157,18 +157,18 @@ struct Trends: View {
             }
             
             .onAppear {
+                let dateInterval: DateInterval
+                
+                dateInterval = Calendar.current.dateInterval(of: .month, for: Date()) ?? DateInterval(start: Date(), end: Date())
+                
+                trendsData = persistentStore.dataReport(range: dateInterval)
+            }
+            
+            .onChange(of: trendsView) { _ in
                 
                 let dateInterval: DateInterval
                 
-                switch(trendsView) {
-                case .day:
-                    dateInterval = Calendar.current.dateInterval(of: .day, for: Date()) ?? DateInterval(start: Date(), end: Date())
-                case .week:
-                    let pastDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())
-                    dateInterval = DateInterval(start: pastDay!, end: Date())
-                case .month:
-                    dateInterval = Calendar.current.dateInterval(of: .month, for: Date()) ?? DateInterval(start: Date(), end: Date())
-                }
+                dateInterval = Calendar.current.dateInterval(of: .month, for: Date()) ?? DateInterval(start: Date(), end: Date())
                 
                 trendsData = persistentStore.dataReport(range: dateInterval)
 

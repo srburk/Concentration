@@ -15,8 +15,6 @@ struct ChartView: View {
     @Binding var dateSelection: Date
     
     @Environment(\.colorScheme) var colorScheme
-
-    var weekdays: [String] = ["S", "M", "T", "W", "T", "F", "S"]
     
     private func chartLines(label: String) -> some View {
         return VStack(spacing: 39) {
@@ -38,14 +36,14 @@ struct ChartView: View {
         
         var maxSessions: Int = 0
         
+        let weekdays: [String] = ["S", "M", "T", "W", "T", "F", "S"]
+        
         for number in 0..<7 {
             
             let filteredSessions = sessions.filter {
                 Calendar.current.isDate($0.date, inSameDayAs: dateSelection.addingTimeInterval(TimeInterval((number-6) * 86400))) && $0.type == .work && $0.completed
             }
-            
-            print(filteredSessions.count)
-            
+                        
             if filteredSessions.count > maxSessions {
                 maxSessions = filteredSessions.count
             }
@@ -66,25 +64,26 @@ struct ChartView: View {
                             Calendar.current.isDate($0.date, inSameDayAs: dateSelection.addingTimeInterval(TimeInterval((number-6) * 86400))) && $0.type == .work && $0.completed
                         }
                         
-                        let barHeight = filteredSessions.count * (120 / ((maxSessions == 0) ? 1 : maxSessions))
+                        let barHeight = filteredSessions.count * (118 / ((maxSessions == 0) ? 1 : maxSessions))
                         
-                        VStack {
-                            if (barHeight == 0) {
+                        let weekdayName = Calendar.current.component(.weekday, from: dateSelection.addingTimeInterval(TimeInterval(number-6) * 86400))
+                        
+                        ZStack(alignment: .bottom) {
+                            
+                            VStack {
                                 RoundedRectangle(cornerRadius: 10).frame(width: 25, height: 120)
                                     .opacity(0.0)
-                            } else {
-                                Rectangle()
-                                    .frame(width: 25, height: CGFloat(barHeight))
-                                    .foregroundColor(.softMint)
-                                    .cornerRadius(10, corners: [.topLeft, .topRight])
+                                Text("\(weekdays[weekdayName-1])")
+                                    .font(.system(size: 12))
+                                    .padding(.top, 20)
                             }
                             
+                            Rectangle()
+                                .frame(width: 25, height: CGFloat(barHeight))
+                                .foregroundColor(.softMint)
+                                .cornerRadius(10, corners: [.topLeft, .topRight])
+                                .padding(.bottom, 20)
                         }
-                        .overlay(Text("\(weekdays[number])")
-                            .font(.system(size: 12))
-                            .padding(.top, 150)
-                        )
-                        
                     }
                 }
             }
@@ -122,12 +121,13 @@ struct ChartView: View {
                             $0.date >= Calendar.current.date(bySettingHour: number, minute: 0, second: 0, of: dateSelection) ?? Date() && $0.date <= Calendar.current.date(bySettingHour: (number == 23) ? 23 : (number + 1), minute: 0, second: 0, of: dateSelection) ?? Date() && $0.type == .work && $0.completed
                         }
                         
-                        let barHeight = filteredSessions.count * (120 / ((maxSessions == 0) ? 1 : maxSessions))
+                        let barHeight = filteredSessions.count * (118 / ((maxSessions == 0) ? 1 : maxSessions))
                         
-                        if (barHeight == 0) {
+                        ZStack(alignment: .bottom) {
+
                             RoundedRectangle(cornerRadius: 10).frame(width: 7, height: 120)
-                                .opacity(0.0)
-                        } else {
+                              .opacity(0.0)
+
                             Rectangle()
                                 .frame(width: 7, height: CGFloat(barHeight))
                                 .foregroundColor(.softMint)
