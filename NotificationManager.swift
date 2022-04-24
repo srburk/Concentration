@@ -31,7 +31,7 @@ class NotificationManager {
     
     func scheduleNotification(dateInterval: Date, notificationString: String) {
         let content = UNMutableNotificationContent()
-        content.title = "Concentration"
+        content.title = "Concentrate"
         content.body = notificationString
         let categoryIdentifier = UUID().uuidString
         content.categoryIdentifier = categoryIdentifier

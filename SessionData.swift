@@ -1,6 +1,6 @@
 //
 //  SessionData.swift
-//  Concentration
+//  Concentrate
 //
 //  Created by Sam Burkhard on 4/15/22.
 //

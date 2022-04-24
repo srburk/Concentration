@@ -1,6 +1,6 @@
 //
 //  ChartView.swift
-//  Concentration
+//  Concentrate
 //
 //  Created by Sam Burkhard on 4/16/22.
 //

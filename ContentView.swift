@@ -6,7 +6,7 @@ struct ContentView: View {
     @State var isShowingTrends: Bool = false
     @State var isShowingSettings: Bool = false
     
-    @State var nextSessionLabel: String = "Concentration"
+    @State var nextSessionLabel: String = "Concentrate"
     
     // MARK: Environment
     @EnvironmentObject var persistentStore: PersistenceStore
@@ -83,7 +83,7 @@ struct ContentView: View {
                 .onChange(of: timer.isActive) { _ in
                     if (!timer.isActive) {
                         withAnimation {
-                            nextSessionLabel = "Concentration"
+                            nextSessionLabel = "Concentrate"
                         }
                     } else {
                         withAnimation() {
@@ -115,7 +115,7 @@ struct ContentView: View {
                 
                 .sheet(isPresented: $needsOnboarding) {
                     VStack {
-                        Text("Concentration").font(.title)
+                        Text("Concentrate").font(.title)
                             .padding(.top, 150)
                         
                         Spacer()

@@ -8,13 +8,13 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Concentration",
+    name: "Concentrate",
     platforms: [
         .iOS("15.2")
     ],
     products: [
         .iOSApplication(
-            name: "Concentration",
+            name: "Concentrate",
             targets: ["AppModule"],
             bundleIdentifier: "com.samburkhard.Concentration",
             teamIdentifier: "3B52K98W7P",
