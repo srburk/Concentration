@@ -98,6 +98,39 @@ extension PersistenceStore {
         }
     }
     
+    func saveDemoData() {
+        var demoData: [SessionLog] = []
+        var sessionType: SessionType = .work
+        var sessionLength: Int = 0
+        for i in 0...7 {
+            let day = Date().addingTimeInterval(TimeInterval(-i * 86400))
+            for _ in 0...15 {
+                let sessionTime = day.addingTimeInterval(TimeInterval(Double.random(in: -12.0...12.0) * 3600))
+                
+                switch(Int.random(in: 1...3)) {
+                case 1:
+                    sessionType = .work
+                    sessionLength = session.workLength
+                case 2:
+                    sessionType = .shortBreak
+                    sessionLength = session.shortLength
+                case 3:
+                    sessionType = (Bool.random()) ? .work : .longBreak
+                    if (sessionType == .work) {
+                        sessionLength = session.workLength
+                    } else {
+                        sessionLength = session.longLength
+                    }
+                default:
+                    print("Error")
+                }
+                demoData.append(SessionLog(id: UUID(), date: sessionTime, completed: Bool.random(), type: sessionType, length: sessionLength))
+            }
+        }
+        self.data = demoData
+        self.save()
+    }
+    
     func nextSessionName() -> String {
         
         let finishTime = ActiveTimer.shared.finishTime(timeTarget: self.activeSessionLength())

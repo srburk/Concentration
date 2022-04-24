@@ -15,17 +15,41 @@ struct Settings: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    @State var edited: Bool = false
+            
+    @State var workLength: Int = 0
+    @State var shortLength: Int = 0
+    @State var longLength: Int = 0
+    @State var showingAlert: Bool = false
+    
+    @AppStorage("hapticFeedbackEnabled") var hapticFeedbackEnabled: Bool = true
+    
+    private func convertToSeconds(minutes: Int) -> Int {
+        return minutes * 60
+    }
+    
     private var timerAmounts: some View {
         List {
             Section(header: Text("Work Session")) {
-                TextField("Work Session", value: $persistentStore.session.workLength, formatter: NumberFormatter())
-            }
-            Section(header: Text("Short Break")) {
-                TextField("Short Break", value: $persistentStore.session.shortLength, formatter: NumberFormatter())
-            }
-            Section(header: Text("Long Break")) {
-                TextField("Long Break", value: $persistentStore.session.longLength, formatter: NumberFormatter())
-            }
+                TextField("Work Session", value: $workLength, formatter: NumberFormatter())
+                    .keyboardType(.decimalPad)
+                }.onChange(of: workLength) { _ in
+                    persistentStore.session.workLength = convertToSeconds(minutes: workLength)
+                }
+                        
+                Section(header: Text("Short Break")) {
+                    TextField("Short Break", value: $shortLength, formatter: NumberFormatter())
+                        .keyboardType(.decimalPad)
+                }.onChange(of: shortLength) { _ in
+                    persistentStore.session.shortLength = convertToSeconds(minutes: shortLength)
+                }
+                
+                Section(header: Text("Long Break")) {
+                    TextField("Long Break", value: $longLength, formatter: NumberFormatter())
+                        .keyboardType(.decimalPad)
+                }.onChange(of: longLength) { _ in
+                    persistentStore.session.longLength = convertToSeconds(minutes: longLength)
+                }
         }
         .navigationTitle("Timer Amounts")
         .navigationBarTitleDisplayMode(.inline)
@@ -40,21 +64,31 @@ struct Settings: View {
                         Label("Timer Amounts", systemImage: "timer").foregroundColor(.primary)
                     }
                     
-                    NavigationLink(destination: timerAmounts) {
-                        Label("Notifications", systemImage: "bell").foregroundColor(.primary)
+                    Toggle(isOn: $hapticFeedbackEnabled) {
+                        Label("Haptic Feedback", systemImage: "hand.tap").foregroundColor(.primary)
                     }
-                    
-                    NavigationLink(destination: Text("Color Accent")) {
-                        Label("Color Accent", systemImage: "paintpalette").foregroundColor(.primary)
-                    }
-                    
+                                        
                 }
                 
                 Button(action: {
-                    print("DELETE")
+                    showingAlert = true
                 }) {
                     Text("Delete Session Data").foregroundColor(.red)
                 }
+            }
+            
+            .onAppear {
+                workLength = persistentStore.session.workLength / 60
+                shortLength = persistentStore.session.shortLength / 60
+                longLength = persistentStore.session.longLength / 60
+            }
+            
+            .alert(isPresented: $showingAlert) {
+                Alert(title: Text("Delete All Session Data?"), message: Text("This will permanently remove your session history"), primaryButton: .default(
+                    Text("Cancel"), action: { showingAlert = false }
+                ), secondaryButton: .destructive(
+                    Text("Delete"), action: { persistentStore.data = [] }
+                ))
             }
             
             .navigationTitle("Settings")

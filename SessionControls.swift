@@ -18,6 +18,8 @@ struct SessionControls: View {
     
     @State var startedSession: Bool = false
     
+    @AppStorage("hapticFeedbackEnabled") var hapticFeedbackEnabled: Bool = true
+    
     @ViewBuilder
     func rootView() -> some View {
         if (timer.isActive) {
@@ -30,8 +32,11 @@ struct SessionControls: View {
                         timer.stop()
                     }
                     
-                    let impact = UIImpactFeedbackGenerator(style: .medium)
-                    impact.impactOccurred()
+                    if (hapticFeedbackEnabled) {
+                        let impact = UIImpactFeedbackGenerator(style: .medium)
+                        impact.impactOccurred()
+                    }
+                    
                 }
             
                 .transition(.scale)
@@ -101,8 +106,10 @@ struct SessionControls: View {
                     
                 }
                                        
-                let impact = UIImpactFeedbackGenerator(style: .medium)
-                impact.impactOccurred()
+                if (hapticFeedbackEnabled) {
+                    let impact = UIImpactFeedbackGenerator(style: .medium)
+                    impact.impactOccurred()
+                }
                 
             }) {
                 Image(systemName: "play.fill")

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 class ActiveTimer: ObservableObject {
     
@@ -55,6 +56,7 @@ extension ActiveTimer {
                     let elapsed = now.timeIntervalSince(self.startTime!)
                     self.timeElapsed = Int(elapsed) + self.timeCompensate
                 }
+            
             self.isActive = true
         }
     }

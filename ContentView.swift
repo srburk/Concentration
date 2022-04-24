@@ -16,6 +16,7 @@ struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @AppStorage("needsOnboarding") var needsOnboarding: Bool = true
+    @AppStorage("hapticFeedbackEnabled") var hapticFeedbackEnabled: Bool = true
     
     func notificationText() -> String {
         switch(persistentStore.settings.activeSession) {
@@ -94,7 +95,7 @@ struct ContentView: View {
                 .onAppear {
                     if (needsOnboarding) {
                         NotificationManager.shared.requestAuth()
-                        needsOnboarding.toggle()
+                        // Load Demo Data
                     }
                     
                     persistentStore.load()
@@ -110,6 +111,30 @@ struct ContentView: View {
                 
                 .sheet(isPresented: $isShowingSettings) {
                     Settings()
+                }
+                
+                .sheet(isPresented: $needsOnboarding) {
+                    VStack {
+                        Text("Concentration").font(.title)
+                            .padding(.top, 150)
+                        
+                        Spacer()
+                        
+                        ZStack {
+                            
+                            RoundedRectangle(cornerRadius: 15)
+                                .frame(height: 50)
+                                .foregroundColor(.softMint)
+                            
+                            Button(action: {
+                                persistentStore.saveDemoData()
+                            }) {
+                                Text("Get Started")
+                                    .foregroundColor(.white)
+                            }
+                            
+                        }.padding()
+                    }.padding()
                 }
                 
                 .toolbar {
