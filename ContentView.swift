@@ -114,27 +114,7 @@ struct ContentView: View {
                 }
                 
                 .sheet(isPresented: $needsOnboarding) {
-                    VStack {
-                        Text("Concentrate").font(.title)
-                            .padding(.top, 150)
-                        
-                        Spacer()
-                        
-                        ZStack {
-                            
-                            RoundedRectangle(cornerRadius: 15)
-                                .frame(height: 50)
-                                .foregroundColor(.softMint)
-                            
-                            Button(action: {
-                                persistentStore.saveDemoData()
-                            }) {
-                                Text("Get Started")
-                                    .foregroundColor(.white)
-                            }
-                            
-                        }.padding()
-                    }.padding()
+                    Onboarding()
                 }
                 
                 .toolbar {
